@@ -3,6 +3,7 @@ import hmac
 import hashlib
 import time
 import configparser
+import sys
 
 
 def get_timestamp() -> int:
@@ -13,11 +14,15 @@ class TuyaMessages:
 
     def __init__(self):
         config = configparser.ConfigParser()
-        config.read("config.ini")
 
-        self.AccessId = config.get("tuya", "AccessId")
-        self.AccessKey = config.get("tuya", "AccessKey")
-        self.ServerUrl = config.get("tuya", "ServerUrl")
+        try:
+            config.read("config.ini")
+            self.AccessId = config.get("tuya", "AccessId")
+            self.AccessKey = config.get("tuya", "AccessKey")
+            self.ServerUrl = config.get("tuya", "ServerUrl")
+        except configparser.NoSectionError:
+            print("Error read config")
+            sys.exit(0)
 
         self.errors = dict()
         self.tokens = dict()
