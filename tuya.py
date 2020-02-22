@@ -6,9 +6,6 @@ import configparser
 import sys
 
 
-def get_timestamp() -> int:
-    return int(round(time.time() * 1000))
-
 
 class TuyaMessages:
 
@@ -46,6 +43,18 @@ class TuyaMessages:
 
 class Core(TuyaMessages):
 
+    @staticmethod
+    def get_timestamp() -> int:
+        return int(round(time.time() * 1000))
+
+    def headers(self) -> dict:
+        t = self.get_timestamp()
+        headers = {"client_id": self.AccessId,
+                   "sign": self.gen_sign(t),
+                   "sign_method": "HMAC-SHA256",
+                   "t": str(t)}
+        return headers
+
     def gen_sign(self, t: int, input_string="") -> str:
         secret_key = self.AccessKey.encode("utf-8")
         if input_string:
@@ -58,24 +67,12 @@ class Core(TuyaMessages):
 
     def get_token(self) -> dict:
         url = "/v1.0/token?grant_type=1"
-
-        t = get_timestamp()
-        headers = {"client_id": self.AccessId,
-                   "sign": self.gen_sign(t),
-                   "sign_method": "HMAC-SHA256",
-                   "t": str(t)}
-        r = requests.get(self.ServerUrl + url, headers=headers)
+        r = requests.get(self.ServerUrl + url, headers=self.headers())
         return r.json()
 
     def update_token(self) -> dict:
         url = "/v1.0/token/" + self.refresh_token
-
-        t = get_timestamp()
-        headers = {"client_id": self.AccessId,
-                   "sign": self.gen_sign(t),
-                   "sign_method": "HMAC-SHA256",
-                   "t": str(t)}
-        r = requests.get(self.ServerUrl + url, headers=headers)
+        r = requests.get(self.ServerUrl + url, headers=self.headers())
         return r.json()
 
     def check_timeout_token(self):
