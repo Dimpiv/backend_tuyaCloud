@@ -18,10 +18,15 @@ async def get_id(request):
 async def get_server_url(request):
     return web.Response(text=tuya.ServerUrl)
 
+
+async def get_schema(request):
+    return web.Response(text=tuya.Schema)
+
 app = web.Application()
 app.add_routes([web.get('/id', get_id),
-                web.get('/get_hash/{string}', get_hash),
-                web.get('/server', get_server_url)])
+                web.get('/hash/{string}', get_hash),
+                web.get('/server', get_server_url),
+                web.get('/schema', get_schema)])
 
 if __name__ == '__main__':
-    web.run_app(app)
+    web.run_app(app, port=8088)

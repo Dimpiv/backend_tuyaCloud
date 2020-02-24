@@ -6,7 +6,6 @@ import configparser
 import sys
 
 
-
 class TuyaMessages:
 
     def __init__(self):
@@ -17,6 +16,7 @@ class TuyaMessages:
             self.AccessId = config.get("tuya", "AccessId")
             self.AccessKey = config.get("tuya", "AccessKey")
             self.ServerUrl = config.get("tuya", "ServerUrl")
+            self.Schema = config.get("tuya", "Schema")
         except configparser.NoSectionError:
             print("Error read config")
             sys.exit(0)
